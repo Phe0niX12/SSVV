@@ -4,6 +4,8 @@ import domain.Tema;
 
 public class TemaValidator implements Validator<Tema> {
 
+
+
     /**
      * Valideaza o tema
      * @param entity - tema pe care o valideaza
