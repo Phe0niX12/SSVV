@@ -1,39 +1,94 @@
+
 package org.example;
+import domain.Student;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import domain.Tema;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import repository.NotaXMLRepo;
+import repository.StudentXMLRepo;
+import repository.TemaFileRepository;
+import repository.TemaXMLRepo;
+import service.Service;
+import validation.NotaValidator;
+import validation.StudentValidator;
+import validation.TemaValidator;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest
-    extends TestCase
-{
+import static org.junit.jupiter.api.Assertions.*;
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
+class AppTest {
+
+    private Service service;
+    private Student student;
+    private StudentXMLRepo studentXMLRepository;
+    private  StudentValidator studentValidator;
+    private TemaXMLRepo temaXMLRepository;
+
+    private TemaValidator temaValidator;
+    private NotaXMLRepo notaXMLRepository;
+
+    private NotaValidator notaValidator;
+    private Student studentBad;
+    private Tema tema1;
+
+
+    @BeforeEach
+    void setUp(){
+        tema1 = new Tema("","",0,0);
+        student = new Student("33", "Somesan Paul", 936, "paul.somesan@gmail.com");
+        studentBad = new Student("", "Somesan Paul", 936, "paul.somesan@gmail.com");
+        studentXMLRepository = new StudentXMLRepo("fisiere/Studenti.xml");
+        studentValidator = new StudentValidator();
+        temaXMLRepository = new TemaXMLRepo("fisiere/Teme.xml");
+        temaValidator = new TemaValidator();
+        notaXMLRepository = new NotaXMLRepo("fisiere/Note.xml");
+        notaValidator = new NotaValidator(studentXMLRepository, temaXMLRepository);
+        service = new Service(studentXMLRepository, studentValidator, temaXMLRepository, temaValidator, notaXMLRepository, notaValidator);
+    }
+    @Test
+    void saveTest_addStudent() {
+
+        Student student1 = service.addStudent(student);
+
+        assertNotEquals(student1, null);
+
+
+        Student student2 = service.addStudent(student);
+        assertNotEquals(student2, null);
+
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+    @Test
+    void validatorTest_addTema() {
+        try{
+            service.addTema(tema1);
+        }catch (Exception e){
+            assertEquals(e.getMessage(), "Numar tema invalid!");
+        }
+        tema1 = new Tema("20","",0,0);
+        try{
+            service.addTema(tema1);
+        }catch (Exception e){
+            assertEquals(e.getMessage(), "Descriere invalida!");
+        }
+        tema1 = new Tema("20","sdao",1000,0);
+        try {
+            service.addTema(tema1);
+        }catch (Exception e) {
+            assertEquals(e.getMessage(), "Deadlineul trebuie sa fie intre 1-14.");
+        }
+        tema1 = new Tema("20","dasa",12,10000000);
+        try {
+            service.addTema(tema1);
+        }catch (Exception e) {
+            assertEquals(e.getMessage(), "Saptamana primirii trebuie sa fie intre 1-14.");
+        }
+        tema1 = new Tema("20","ada",11,11);
+        try{
+            Tema tema2 = service.addTema(tema1);
+            assertEquals(tema2.getID(),tema1.getID());
+        }catch (Exception e){
+            assertEquals(e.getMessage(), "");
+        }
     }
 }

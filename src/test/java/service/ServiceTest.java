@@ -81,7 +81,7 @@ class ServiceTest {
         }catch (Exception e) {
             assertEquals(e.getMessage(), "Saptamana primirii trebuie sa fie intre 1-14.");
         }
-        tema1 = new Tema("20","ada",11,11);
+        tema1 =  new Tema("20","ada",11,11);
         try{
             Tema tema2 = service.addTema(tema1);
             assertEquals(tema2.getID(),tema1.getID());
