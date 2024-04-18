@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repository.NotaXMLRepo;
 import repository.StudentXMLRepo;
+import repository.TemaFileRepository;
 import repository.TemaXMLRepo;
 import validation.NotaValidator;
 import validation.StudentValidator;
@@ -67,6 +68,25 @@ class ServiceTest {
             service.addTema(tema1);
         }catch (Exception e){
             assertEquals(e.getMessage(), "Descriere invalida!");
+        }
+        tema1 = new Tema("20","sdao",1000,0);
+        try {
+            service.addTema(tema1);
+        }catch (Exception e) {
+            assertEquals(e.getMessage(), "Deadlineul trebuie sa fie intre 1-14.");
+        }
+        tema1 = new Tema("20","dasa",12,10000000);
+        try {
+            service.addTema(tema1);
+        }catch (Exception e) {
+            assertEquals(e.getMessage(), "Saptamana primirii trebuie sa fie intre 1-14.");
+        }
+        tema1 = new Tema("20","ada",11,11);
+        try{
+            Tema tema2 = service.addTema(tema1);
+            assertEquals(tema2.getID(),tema1.getID());
+        }catch (Exception e){
+            assertEquals(e.getMessage(), "");
         }
     }
 }
