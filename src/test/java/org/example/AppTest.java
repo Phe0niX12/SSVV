@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repository.NotaXMLRepo;
 import repository.StudentXMLRepo;
-import repository.TemaFileRepository;
 import repository.TemaXMLRepo;
 import service.Service;
 import validation.NotaValidator;
@@ -59,30 +58,48 @@ class AppTest {
     }
 
     @Test
-    void validatorTest_addTema() {
+    void validatorTest_addTema_numberInvalid() {
         try{
             service.addTema(tema1);
         }catch (Exception e){
             assertEquals(e.getMessage(), "Numar tema invalid!");
         }
+
+
+
+
+    }
+    @Test
+    void validatorTest_addTema_descriptionInvalid(){
         tema1 = new Tema("20","",0,0);
         try{
             service.addTema(tema1);
         }catch (Exception e){
             assertEquals(e.getMessage(), "Descriere invalida!");
         }
+    }
+
+    @Test
+    void validatorTest_addTema_deadlineInvalid(){
         tema1 = new Tema("20","sdao",1000,0);
         try {
             service.addTema(tema1);
         }catch (Exception e) {
             assertEquals(e.getMessage(), "Deadlineul trebuie sa fie intre 1-14.");
         }
+    }
+    @Test
+    void validatorTest_addTema_primireInvalida(){
         tema1 = new Tema("20","dasa",12,10000000);
         try {
             service.addTema(tema1);
         }catch (Exception e) {
             assertEquals(e.getMessage(), "Saptamana primirii trebuie sa fie intre 1-14.");
         }
+    }
+
+    @Test
+    void validatorTest_addTema_validTema(){
         tema1 = new Tema("20","ada",11,11);
         try{
             Tema tema2 = service.addTema(tema1);
@@ -91,4 +108,5 @@ class AppTest {
             assertEquals(e.getMessage(), "");
         }
     }
+
 }
