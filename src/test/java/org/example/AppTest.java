@@ -1,5 +1,6 @@
 
 package org.example;
+import domain.Nota;
 import domain.Student;
 
 import domain.Tema;
@@ -13,10 +14,13 @@ import validation.NotaValidator;
 import validation.StudentValidator;
 import validation.TemaValidator;
 
+import java.time.LocalDate;
+import java.time.Month;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
-
+    private Nota nota;
     private Service service;
     private Student student;
     private StudentXMLRepo studentXMLRepository;
@@ -104,6 +108,48 @@ class AppTest {
         try{
             Tema tema2 = service.addTema(tema1);
             assertEquals(tema2.getID(),tema1.getID());
+        }catch (Exception e){
+            assertEquals(e.getMessage(), "");
+        }
+    }
+
+    @Test
+    void validatorTest_addNota_validStudent() {
+        student = new Student("10", "Adi", 916, "sdasdas@gmail.com");
+
+
+        try {
+            Student student1 = service.addStudent(student);
+            assertEquals(student1.getNume(), student.getNume());
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Studentul valid!");
+        }
+    }
+
+
+    @Test
+    void validatorTest_addNota_validNota() {
+        nota = new Nota("", "10", "20", 6, LocalDate.of(2015, Month.FEBRUARY, 11));
+
+        try {
+            double nota2 = service.addNota(nota,"Bun");
+            assertNull(nota2);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Studentul nu mai poate preda aceasta tema!");
+        }
+    }
+
+    @Test
+    void inegrationTest_addNota_addTema_addStudent(){
+        tema1 = new Tema("200","dasa",1,4);
+        student = new Student("100", "Adi", 916, "sdasdas@gmail.com");
+        nota = new Nota("10", "100", "200", 6, LocalDate.of(2018, Month.OCTOBER, 15));
+
+        try{
+            service.addStudent(student);
+            service.addTema(tema1);
+            double nota2 = service.addNota(nota,"Esti Bun");
+            assertEquals(nota2, 3.5);
         }catch (Exception e){
             assertEquals(e.getMessage(), "");
         }
